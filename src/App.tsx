@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const App: React.FC = () => {
-  const [text, setText] = useState('');
-  const [response, setResponse] = useState<{ 'Amharic text'?: string, 'Audio output Location'?: string, error?: string } | null>(null);
+  const [text, setText] = useState("");
+  const [response, setResponse] = useState<{
+    "Amharic text"?: string;
+    "Audio output Location"?: string;
+    error?: string;
+  } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -10,10 +14,10 @@ const App: React.FC = () => {
     const requestData = { text };
 
     try {
-      const res = await fetch('https://q5ltq1bf-8933.uks1.devtunnels.ms/generate_out_put', {
-        method: 'POST',
+      const res = await fetch("http://127.0.0.1:5000/generate_out_put", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(requestData),
       });
@@ -21,8 +25,8 @@ const App: React.FC = () => {
       const data = await res.json();
       setResponse(data);
     } catch (error) {
-      console.error('Error:', error);
-      setResponse({ error: 'Failed to fetch data from the server' });
+      console.error("Error:", error);
+      setResponse({ error: "Failed to fetch data from the server" });
     }
   };
 
@@ -45,8 +49,17 @@ const App: React.FC = () => {
             <p>Error: {response.error}</p>
           ) : (
             <div>
-              <p>Amharic text: {response['Amharic text']}</p>
-              <p>Audio output Location: {response['Audio output Location']}</p>
+              <p>Amharic text: {response["Amharic text"]}</p>
+              <p>Audio output Location: {response["Audio output Location"]}</p>
+              {response["Audio output Location"] && (
+                <audio key={response["Audio output Location"]} controls>
+                  <source
+                    src={`http://127.0.0.1:5000${response["Audio output Location"]}`}
+                    type="audio/wav"
+                  />
+                  Your browser does not support the audio element.
+                </audio>
+              )}
             </div>
           )}
         </div>
